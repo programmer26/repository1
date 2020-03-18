@@ -1,0 +1,60 @@
+	glGetShaderiv(*id, GL_COMPILE_STATUS, &result);
+	if(result == GL_FALSE)
+	{
+		GLint maxLength = 0;
+		glGetShaderiv(*id, GL_INFO_LOG_LENGTH, &maxLength);
+		std::vector<GLchar> errorLog(maxLength);
+		glGetShaderInfoLog(*id, maxLength, &maxLength, &errorLog[0]);
+		if(type == GL_VERTEX_SHADER)
+		{
+			std::cerr << "Vertex shader failed to compile" << std::endl;
+		}
+		else
+			std::cerr << "Fragment shader failed to compile" << std::endl;
+
+		for(auto i : errorLog)
+		{
+			std::cout << i;
+		}
+		glDeleteShader(*id);
+		return;
+	}
+	else
+	{
+		GLint maxLength = 0;
+		glGetShaderiv(*id, GL_INFO_LOG_LENGTH, &maxLength);
+		if(maxLength == 0)
+		{
+			std::cout << "Compilation was successful" << std::endl;
+			return;
+		}
+		std::vector<GLchar> errorLog(maxLength);
+		glGetShaderInfoLog(*id, maxLength, &maxLength, &errorLog[0]);
+		for(auto i : errorLog)
+		{
+			std::cout << i;
+		}
+	}
+//////////////////////program
+
+glGetProgramiv(program_id, GL_LINK_STATUS, &result);
+	if(result == GL_FALSE)
+	{
+		GLint maxLength = 0;
+		glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &maxLength);
+
+		// The maxLength includes the NULL character
+		std::vector<GLchar> errorLog(maxLength);
+		glGetProgramInfoLog(program_id, maxLength, &maxLength, &errorLog[0]);
+
+		// Provide the infolog in whatever manor you deem best.
+		for(auto i : errorLog)
+		{
+			std::cout << i;
+		}
+		// Exit with failure.
+		glDeleteProgram(program_id); // Don't leak the shader.
+		return GL_FALSE;
+	}
+	else std::cout << "Link was successful!" << std::endl;
+
